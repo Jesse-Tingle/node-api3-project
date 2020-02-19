@@ -1,6 +1,6 @@
 const express = require("express");
 const posts = require("./postDb.js");
-const { validatePostId } = require("../middleware/validatePostId.js");
+const { validatePostId } = require("../middleware/post/validatePostId.js");
 
 const router = express.Router();
 

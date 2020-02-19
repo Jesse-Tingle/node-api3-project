@@ -1,6 +1,6 @@
 // custom middleware - validatePostId
 
-const posts = require("../posts/postDb.js");
+const posts = require("../../posts/postDb.js");
 
 function validatePostId() {
 	return (req, res, next) => {

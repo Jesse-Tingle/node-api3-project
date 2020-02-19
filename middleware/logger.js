@@ -1,4 +1,4 @@
-//custom middleware
+//custom middleware - logger
 
 module.exports = (req, res, next) => {
 	const { method, url } = req;

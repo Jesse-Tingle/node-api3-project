@@ -1,9 +1,14 @@
-const express = require('express');
+// libraries
+const express = require("express");
 
+// global objects
 const server = express();
 
-server.get('/', (req, res) => {
-  res.send(`<h2>Let's write some middleware!</h2>`);
+// middleware
+server.use(express.json());
+
+server.get("/", (req, res) => {
+	res.send(`<h2>Let's write some middleware!</h2>`);
 });
 
 //custom middleware

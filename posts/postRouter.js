@@ -4,8 +4,23 @@ const { validatePostId } = require("../middleware/validatePostId.js");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res, next) => {
 	// do your magic!
+	const opts = {
+		sortBy: req.query.sortBy,
+		limit: req.query.limit
+	};
+
+	posts
+		.get(opts)
+		.then(post => {
+			res.status(200).json(post);
+		})
+		.catch(error => {
+			// calling "next" with no parameters moves to the next piece of middleware,
+			// calling "next" with a parameter moves to the error middleware.
+			next(error);
+		});
 });
 
 router.get("/:id", validatePostId(), (req, res) => {

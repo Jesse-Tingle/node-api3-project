@@ -1,10 +1,11 @@
 const express = require("express");
 const posts = require("./postDb.js");
 const { validatePostId } = require("../middleware/post/validatePostId.js");
+const { validatePost } = require("../middleware/post/validatePost.js");
 
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
+router.get("/", (req, res, next) => {
 	// do your magic!
 	const opts = {
 		sortBy: req.query.sortBy,
@@ -27,6 +28,8 @@ router.get("/:id", validatePostId(), (req, res) => {
 	// "req.post" comes from the "validatePostId" middleware
 	res.status(200).json(req.post);
 });
+
+router.post("/", validatePost(), (req, res) => {});
 
 router.delete("/:id", validatePostId(), (req, res) => {
 	posts

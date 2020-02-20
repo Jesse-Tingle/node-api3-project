@@ -16,7 +16,7 @@ server.use(helmet());
 server.use(express.json());
 
 server.use("/api/user", userRoutes);
-server.use("/api/post", postRoutes);
+// server.use("/api/post", postRoutes);
 
 server.get("/", (req, res) => {
 	res.send(`<h2>Let's write some middleware!</h2>`);

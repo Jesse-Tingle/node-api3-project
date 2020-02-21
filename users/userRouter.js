@@ -26,8 +26,8 @@ router.get("/:id", validateUserId(), (req, res) => {
 	res.status(200).json(req.user);
 });
 
-router.get("/:id/posts", (req, res) => {
-	// do your magic!
+router.get("/:id/posts", validateUserId(), validatePost(), (req, res) => {
+	res.status(200).json(req.post);
 });
 
 router.delete("/:id", (req, res) => {
@@ -64,8 +64,23 @@ function validateUser(req, res, next) {
 	// do your magic!
 }
 
-function validatePost(req, res, next) {
-	// do your magic!
+function validatePost() {
+	return (req, res, next) => {
+		userDb
+			.getUserPosts(req.params.id)
+			.then(post => {
+				if (post) {
+					req.post = post;
+					console.log("req.post: ", req.post);
+					next();
+				} else {
+					res.status(404).json({ message: "This user does not have a post." });
+				}
+			})
+			.catch(err => {
+				next(err);
+			});
+	};
 }
 
 module.exports = router;

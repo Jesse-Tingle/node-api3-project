@@ -71,7 +71,6 @@ function validatePost() {
 			.then(post => {
 				if (post) {
 					req.post = post;
-					console.log("req.post: ", req.post);
 					next();
 				} else {
 					res.status(404).json({ message: "This user does not have a post." });

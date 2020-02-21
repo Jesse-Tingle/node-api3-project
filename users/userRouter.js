@@ -4,14 +4,26 @@ const router = express.Router();
 
 const userDb = require("./userDb.js");
 
-router.post("/", (req, res) => {
-	// do your magic!
+// posts a new user
+router.post("/", validateUser(), async (req, res) => {
+	try {
+		const { name } = req.body;
+		console.log("name: ", name);
+		res.status(201).json(await userDb.insert({ name }));
+	} catch (error) {
+		res.status(500).json({
+			error,
+			errorMessage: "There was an error while saving the post to the database"
+		});
+	}
 });
 
+// posts a new posts to a specific user
 router.post("/:id/posts", (req, res) => {
 	// do your magic!
 });
 
+// gets a list of all users
 router.get("/", async (req, res) => {
 	const users = await userDb.get();
 	// console.log("users: ", users);
@@ -22,18 +34,22 @@ router.get("/", async (req, res) => {
 	}
 });
 
+// gets user by ID
 router.get("/:id", validateUserId(), (req, res) => {
 	res.status(200).json(req.user);
 });
 
+// gets list of posts by user with that ID
 router.get("/:id/posts", validateUserId(), validatePost(), (req, res) => {
 	res.status(200).json(req.post);
 });
 
+// deletes user with this ID
 router.delete("/:id", (req, res) => {
 	// do your magic!
 });
 
+// updates user with this ID
 router.put("/:id", (req, res) => {
 	// do your magic!
 });
@@ -60,8 +76,15 @@ function validateUserId() {
 	};
 }
 
-function validateUser(req, res, next) {
-	// do your magic!
+// validates the body on a request to create a new user
+function validateUser() {
+	return (req, res, next) => {
+		// const { name } = req.body;
+		if (!req.body.name) {
+			return res.status(400).json({ message: "missing required name field." });
+		}
+		next();
+	};
 }
 
 function validatePost() {

@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const userDb = require("./userDb.js");
+const postDb = require("../posts/postDb.js");
 
 // posts a new user
 router.post("/", validateUser(), async (req, res) => {
@@ -19,9 +20,23 @@ router.post("/", validateUser(), async (req, res) => {
 });
 
 // posts a new posts to a specific user
-router.post("/:id/posts", (req, res) => {
-	// do your magic!
-});
+router.post(
+	"/:id/posts",
+	validateUserId(),
+	validatePostContent(),
+	async (req, res) => {
+		try {
+			const post = req.body;
+			console.log("post: ", post);
+			res.status(201).json(await postDb.insert(post));
+		} catch (error) {
+			res.status(500).json({
+				error,
+				errorMessage: "There was an error while saving the post to the database"
+			});
+		}
+	}
+);
 
 // gets a list of all users
 router.get("/", async (req, res) => {
@@ -87,21 +102,32 @@ function validateUser() {
 	};
 }
 
+// checks if the user has any listed posts
 function validatePost() {
 	return (req, res, next) => {
 		userDb
 			.getUserPosts(req.params.id)
 			.then(post => {
-				if (post) {
+				if (post.length < 1) {
+					res.status(404).json({ message: "This user does not have a post." });
+				} else {
 					req.post = post;
 					next();
-				} else {
-					res.status(404).json({ message: "This user does not have a post." });
 				}
 			})
 			.catch(err => {
 				next(err);
 			});
+	};
+}
+
+function validatePostContent() {
+	return (req, res, next) => {
+		const { text } = req.body;
+		if (!text) {
+			return res.status(400).json({ message: "missing required text field." });
+		}
+		next();
 	};
 }
 
